@@ -94,20 +94,17 @@ load_pickle()
 def main():
     return redirect(url_for('table'))
 
-
 @app.route('/table', methods=['POST', 'GET'])
 def table():
     if request.method == "POST":
         return redirect(url_for('find', find_name=request.form['find_name']))
     return render_template('table.html', table=PhoneBook.book)
 
-
 @app.route('/table/<find_name>', methods=['POST', 'GET'])
 def find(find_name):
     if request.method == "POST":
         return redirect(url_for('table'))
     return render_template('find.html', table=PhoneBook.find_person(find_name))
-
 
 @app.route('/table/add', methods=['POST', 'GET'])
 def add():
@@ -117,7 +114,6 @@ def add():
         save_pickle()
         return redirect(url_for('table'))
     return render_template('add.html')
-
 
 @app.route('/table/edit/<key>', methods=['POST', 'GET'])
 def edit(key):
@@ -134,7 +130,6 @@ def edit(key):
                            name=PhoneBook.book[key].name,
                            sname=PhoneBook.book[key].second_name,
                            phone=PhoneBook.book[key].phone)
-
 
 @app.route('/table/delete/<key>', methods=['POST', 'GET'])
 def delete(key):
