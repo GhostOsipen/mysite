@@ -20,7 +20,7 @@
          <td> {{ row["name"] }} </td>
          <td> {{ row["second_name"] }} </td>
          <td> {{ row["phone"] }} </td>
-         <td><a href="{{ url_for('edit', key = key, name = value.name, sname = value.second_name, phone = value.phone) }}">
+         <td><a href="{{ url_for('edit', key = row['phone'], name = row['name'], sname = row['second_name'], phone = row['phone']) }}">
                <input type="submit" value="Edit"></td>
          <td>
             <form action="/table/delete/{{key}}" method="POST">

@@ -91,8 +91,6 @@ def load_pickle():
 
 
 # ===================================================================
-load_pickle()
-
 
 @app.route('/')
 def main():
@@ -104,13 +102,13 @@ def table():
     con.row_factory = sqlite3.Row
 
     cur = con.cursor()
-    cur.execute("select * from students")
+    cur.execute("select * from person")
 
     rows = cur.fetchall()
 
     if request.method == "POST":
         return redirect(url_for('find', find_name=request.form['find_name']))
-    return render_template('table.html', table=rows)
+    return render_template('table.html', rows=rows)
 
 @app.route('/table/<find_name>', methods=['POST', 'GET'])
 def find(find_name):
@@ -125,18 +123,14 @@ def add():
         second_name = request.form['sname']
         phone = request.form['phone']
 
-        with sqlite3.connect("database.db") as con:
+        with sqlite3.connect("database/phonebook-db.db") as con:
             cur = con.cursor()
-            cur.execute("INSERT INTO students (name,second_name,phone) VALUES (?,?,?,?)",(name,second_name,phone) )
+            cur.execute("INSERT INTO person (name,second_name,phone) VALUES (?,?,?)",(name,second_name,phone) )
             
             con.commit()
             msg = "Record successfully added"
-
-        # PhoneBook.add_person(
-        #     request.form['name'], request.form['sname'], request.form['phone'])
-        # save_pickle()
         con.close()
-        return redirect(url_for('table'))
+        return redirect(url_for('table', msg=msg))
     return render_template('add.html')
 
 @app.route('/table/edit/<key>', methods=['POST', 'GET'])
