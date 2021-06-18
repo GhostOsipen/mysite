@@ -15,11 +15,11 @@
       <th> Phone </th>
       <th> Edit </th>
       <th> Delete</th>
-      {% for key, value in table.items() %}
+      {% for row in rows %}
       <tr>
-         <td> {{ value.name }} </td>
-         <td> {{ value.second_name }} </td>
-         <td> {{ value.phone }} </td>
+         <td> {{ row["name"] }} </td>
+         <td> {{ row["second_name"] }} </td>
+         <td> {{ row["phone"] }} </td>
          <td><a href="{{ url_for('edit', key = key, name = value.name, sname = value.second_name, phone = value.phone) }}">
                <input type="submit" value="Edit"></td>
          <td>

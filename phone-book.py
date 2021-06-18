@@ -1,10 +1,14 @@
 import pickle
-import re
+import sqlite3
+
 from typing import Dict
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, redirect, url_for, request, render_template,g
 from flask_table import Table, Col
 app = Flask(__name__)
 
+#database====================================
+
+#============================================
 
 class Person:
     def __init__(self,  name, second_name, phone) -> None:
@@ -96,9 +100,17 @@ def main():
 
 @app.route('/table', methods=['POST', 'GET'])
 def table():
+    con = sqlite3.connect("database/phonebook-db.db")
+    con.row_factory = sqlite3.Row
+
+    cur = con.cursor()
+    cur.execute("select * from students")
+
+    rows = cur.fetchall()
+
     if request.method == "POST":
         return redirect(url_for('find', find_name=request.form['find_name']))
-    return render_template('table.html', table=PhoneBook.book)
+    return render_template('table.html', table=rows)
 
 @app.route('/table/<find_name>', methods=['POST', 'GET'])
 def find(find_name):
@@ -109,9 +121,21 @@ def find(find_name):
 @app.route('/table/add', methods=['POST', 'GET'])
 def add():
     if request.method == "POST":
-        PhoneBook.add_person(
-            request.form['name'], request.form['sname'], request.form['phone'])
-        save_pickle()
+        name = request.form['name']
+        second_name = request.form['sname']
+        phone = request.form['phone']
+
+        with sqlite3.connect("database.db") as con:
+            cur = con.cursor()
+            cur.execute("INSERT INTO students (name,second_name,phone) VALUES (?,?,?,?)",(name,second_name,phone) )
+            
+            con.commit()
+            msg = "Record successfully added"
+
+        # PhoneBook.add_person(
+        #     request.form['name'], request.form['sname'], request.form['phone'])
+        # save_pickle()
+        con.close()
         return redirect(url_for('table'))
     return render_template('add.html')
 
@@ -137,7 +161,6 @@ def delete(key):
         PhoneBook.delete_person(key)
         save_pickle()
     return redirect(url_for('table'))
-
 
 
 if __name__ == '__main__':
